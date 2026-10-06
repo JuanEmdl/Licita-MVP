@@ -1,0 +1,30 @@
+# --- Entornos virtuales ---
+.venv/
+venv/
+venv.roto/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# --- Secretos ---
+# Nunca subir cadenas de conexion, claves de Azure OpenAI ni tokens.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# --- Editor / herramientas ---
+.vscode/
+.idea/
+.claude/
+
+# --- Sistema operativo ---
+Thumbs.db
+Desktop.ini
+.DS_Store

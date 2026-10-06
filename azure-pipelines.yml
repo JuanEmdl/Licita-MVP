@@ -1,0 +1,88 @@
+# Pipeline de Azure DevOps: construye la imagen de la webui y la publica en
+# Azure Container Apps.
+#
+# Requisito previo (una sola vez, desde Azure DevOps):
+#   Project Settings > Service connections > New > Azure Resource Manager
+#   Nombre sugerido: sc-licitaciones-azure
+#
+# La imagen se construye con 'az acr build', es decir dentro de Azure. El agente
+# no necesita Docker y el build no depende de la maquina de nadie.
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - src/webui/**
+      - docker/webui.Dockerfile
+      - requirements.txt
+      - azure-pipelines.yml
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  conexionAzure: 'sc-licitaciones-azure'
+  grupoRecursos: 'rg-licitaciones-mvp'
+  registro: 'acrlicitacioneslicita01'
+  appWeb: 'ca-licitaciones-webui'
+  imagen: 'webui'
+  # El numero de build hace cada despliegue rastreable hasta su commit.
+  etiqueta: '$(Build.BuildId)'
+
+stages:
+  - stage: Construir
+    displayName: Construir imagen
+    jobs:
+      - job: acr_build
+        displayName: az acr build
+        steps:
+          - task: AzureCLI@2
+            displayName: Construir y publicar en ACR
+            inputs:
+              azureSubscription: $(conexionAzure)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+                az acr build \
+                  --registry "$(registro)" \
+                  --image "$(imagen):$(etiqueta)" \
+                  --image "$(imagen):latest" \
+                  --file docker/webui.Dockerfile \
+                  .
+
+  - stage: Desplegar
+    displayName: Desplegar a Container Apps
+    dependsOn: Construir
+    condition: succeeded()
+    jobs:
+      - deployment: contenedor
+        displayName: Actualizar Container App
+        environment: produccion
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: AzureCLI@2
+                  displayName: az containerapp update
+                  inputs:
+                    azureSubscription: $(conexionAzure)
+                    scriptType: bash
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      set -euo pipefail
+                      SERVIDOR=$(az acr show --name "$(registro)" --query loginServer --output tsv)
+
+                      az containerapp update \
+                        --name "$(appWeb)" \
+                        --resource-group "$(grupoRecursos)" \
+                        --image "$SERVIDOR/$(imagen):$(etiqueta)"
+
+                      URL=$(az containerapp show \
+                        --name "$(appWeb)" \
+                        --resource-group "$(grupoRecursos)" \
+                        --query "properties.configuration.ingress.fqdn" \
+                        --output tsv)
+                      echo "Desplegado en: https://$URL"

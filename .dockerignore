@@ -1,0 +1,23 @@
+# Entornos virtuales: pesan cientos de MB y la imagen instala sus propias deps.
+.venv/
+venv/
+venv.roto/
+
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+.git/
+.gitignore
+.claude/
+.vscode/
+.idea/
+
+# Secretos: nunca deben entrar en una imagen.
+.env
+.env.*
+!.env.example
+
+*.pdf
+README.md
+docs/

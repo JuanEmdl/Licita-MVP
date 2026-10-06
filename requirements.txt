@@ -1,0 +1,26 @@
+# Web UI
+nicegui
+# API
+fastapi
+uvicorn[standard]
+# Workers / AI
+langgraph
+langgraph-checkpoint-postgres
+langchain
+langchain-openai
+# Database
+sqlalchemy
+psycopg2-binary
+psycopg[pool]
+pgvector
+# Azure
+azure-servicebus
+azure-storage-blob
+azure-identity
+azure-keyvault-secrets
+# Observability
+opentelemetry-api
+opentelemetry-sdk
+azure-monitor-opentelemetry-exporter
+# Env management
+python-dotenv

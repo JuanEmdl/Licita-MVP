@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  webui:
+    build: 
+      context: .
+      dockerfile: docker/webui.Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - API_URL=http://api:8000
+    depends_on:
+      - api
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_CONNECTION_STRING=postgresql://user:password@db:5432/licitaciones
+      - SERVICE_BUS_CONNECTION_STRING=Endpoint=sb://mock...
+    depends_on:
+      - db
+
+  worker_analysis:
+    build:
+      context: .
+      dockerfile: docker/worker_analysis.Dockerfile
+    environment:
+      - DB_CONNECTION_STRING=postgresql://user:password@db:5432/licitaciones
+      - SERVICE_BUS_CONNECTION_STRING=Endpoint=sb://mock...
+      - AZURE_OPENAI_ENDPOINT=https://mock.openai.azure.com/
+      - AZURE_OPENAI_API_KEY=mock_key
+    depends_on:
+      - db
+
+  worker_vigilance:
+    build:
+      context: .
+      dockerfile: docker/worker_vigilance.Dockerfile
+    environment:
+      - DB_CONNECTION_STRING=postgresql://user:password@db:5432/licitaciones
+    depends_on:
+      - db
+
+  db:
+    image: ankane/pgvector:latest
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=licitaciones
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
