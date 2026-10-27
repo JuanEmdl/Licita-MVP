@@ -1,0 +1,35 @@
+{
+  "nombre": "Gobernación de Norte de Santander — portal web institucional",
+  "proceso": "CO1.BDOS.9323694",
+  "modalidad": "Selección abreviada de menor cuantía",
+  "documentos": ["data/evaluacion/pliegos_secop/08_norte_santander/PLIEGO DEFINITIVO.pdf"],
+  "esperados": [
+    {"id": "Liquidez", "claves": ["liquidez", "5"], "categoria": "financiero", "habilitante": true, "referencia": "6.2", "dictamen": "No cumple"},
+    {"id": "Endeudamiento", "claves": ["endeudamiento", "27"], "categoria": "financiero", "habilitante": true, "referencia": "6.2", "dictamen": "Cumple"},
+    {"id": "Cobertura de intereses", "claves": ["cobertura", "5"], "categoria": "financiero", "habilitante": true, "referencia": "6.2", "dictamen": "Cumple"},
+    {"id": "Rentabilidad del patrimonio", "claves": ["patrimonio", "0,26"], "categoria": "financiero", "habilitante": true, "referencia": "6.2", "dictamen": "Cumple"},
+    {"id": "Rentabilidad del activo", "claves": ["activo", "0,19"], "categoria": "financiero", "habilitante": true, "referencia": "6.2", "dictamen": "No cumple"},
+    {"id": "Accesibilidad web", "claves": ["accesibilidad"], "categoria": "tecnico", "habilitante": true, "referencia": "6.3", "dictamen": "Cumple"},
+    {"id": "Seguridad y protección de datos", "claves": ["proteccion de datos"], "categoria": "tecnico", "habilitante": true, "referencia": "6.3", "dictamen": "Cumple"},
+    {"id": "Profesional jefe de procesos", "claves": ["gerencia de proyectos"], "alternativas": [["jefatura"]], "categoria": "personal", "habilitante": true, "referencia": "6.3", "dictamen": "Cumple parcialmente"},
+    {"id": "Profesional PostgreSQL", "claves": ["postgresql"], "categoria": "personal", "habilitante": true, "referencia": "6.3", "dictamen": "Cumple"},
+    {"id": "Precio", "claves": ["39,75"], "categoria": "financiero", "habilitante": false, "referencia": null, "dictamen": "No verificable"},
+    {"id": "Metodología", "claves": ["metodologia", "10 puntos"], "categoria": "tecnico", "habilitante": false, "referencia": null, "dictamen": null},
+    {"id": "Diseño UX/UI accesible", "claves": ["wcag"], "categoria": "tecnico", "habilitante": false, "referencia": null, "dictamen": "Cumple"},
+    {"id": "Estrategia de seguridad e interoperabilidad", "claves": ["interoperabilidad", "5 puntos"], "categoria": "tecnico", "habilitante": false, "referencia": null, "dictamen": null},
+    {"id": "Industria nacional", "claves": ["industria nacional"], "categoria": "juridico", "habilitante": false, "referencia": null, "dictamen": "Cumple"},
+    {"id": "Emprendimiento y Mipymes", "claves": ["mipymes", "15"], "categoria": "juridico", "habilitante": false, "referencia": null, "dictamen": "Cumple"},
+    {"id": "Empresa liderada por mujeres", "claves": ["mujeres"], "categoria": "juridico", "habilitante": false, "referencia": null, "dictamen": "No verificable"},
+    {"id": "Cumplimiento histórico y experiencia específica", "claves": ["mspi"], "alternativas": [["ipv6"]], "categoria": "experiencia", "habilitante": false, "referencia": null, "dictamen": "No cumple"}
+  ],
+  "prohibidos": [],
+  "portafolio": [
+    {"tecnologia": "Indicadores financieros RUP 2025", "categoria": "Financiero", "descripcion": "DATO DE PRUEBA FICTICIO. Información financiera en firme en el RUP con corte a 31 de diciembre de 2025: índice de liquidez 3,2; nivel de endeudamiento 22 %; razón de cobertura de intereses 8,0; rentabilidad del patrimonio 0,30; rentabilidad del activo 0,14."},
+    {"tecnologia": "Accesibilidad", "categoria": "Desarrollo", "descripcion": "DATO DE PRUEBA FICTICIO. Los portales que desarrolla la empresa cumplen los criterios de accesibilidad WCAG 2.1 nivel AA y la Resolución 1519 de 2020; el diseño UX/UI se valida con pruebas de accesibilidad."},
+    {"tecnologia": "Seguridad y datos personales", "categoria": "Desarrollo", "descripcion": "DATO DE PRUEBA FICTICIO. Protocolos de protección de datos personales (Ley 1581 de 2012) e integridad de la información en todos los portales: cifrado TLS, control de acceso y registros de auditoría."},
+    {"tecnologia": "Jefe de proyectos", "categoria": "Equipo de trabajo", "descripcion": "DATO DE PRUEBA FICTICIO. Ingeniero de sistemas con cinco años de experiencia en jefatura de procesos de sistemas e infraestructura, sin título de especialización."},
+    {"tecnologia": "PostgreSQL", "categoria": "Equipo de trabajo", "descripcion": "DATO DE PRUEBA FICTICIO. Ingeniero de sistemas con certificación en desarrollo web y tres años de experiencia en administración de PostgreSQL."},
+    {"tecnologia": "Seguridad digital", "categoria": "Experiencia", "descripcion": "DATO DE PRUEBA FICTICIO. La empresa no ha ejecutado contratos de implementación del MSPI ni de configuración de IPv6."},
+    {"tecnologia": "Condición de la empresa", "categoria": "Jurídico", "descripcion": "DATO DE PRUEBA FICTICIO. Sociedad colombiana clasificada como pequeña empresa (Mipyme) que presta servicios nacionales."}
+  ]
+}

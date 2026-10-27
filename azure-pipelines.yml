@@ -1,45 +1,185 @@
-# Pipeline de Azure DevOps: construye la imagen de la webui y la publica en
-# Azure Container Apps.
+# Canalización de Azure DevOps (apartado 4.3, Tablas 31 y 33).
 #
-# Requisito previo (una sola vez, desde Azure DevOps):
-#   Project Settings > Service connections > New > Azure Resource Manager
-#   Nombre sugerido: sc-licitaciones-azure
+# 1. Verificar: pruebas unitarias y de integración con cobertura, funciones de aptitud
+#    FF-02 a FF-06 y FF-08, y análisis de seguridad (FF-07: Bandit y pip-audit). Corre en
+#    cada solicitud de incorporación y en cada integración a main; si falla, no se fusiona.
+# 2. Construir: las cuatro imágenes con 'az acr build' (dentro de Azure; el agente no
+#    necesita Docker). Solo en main.
+# 3. Desplegar: Terraform en el ambiente de pruebas y, con aprobación manual del ambiente
+#    «produccion» en Azure DevOps, en producción (gobernanza, apartado 3.36).
 #
-# La imagen se construye con 'az acr build', es decir dentro de Azure. El agente
-# no necesita Docker y el build no depende de la maquina de nadie.
+# FF-01 (carga con Locust) va en azure-pipelines-carga.yml: consume cuota de inferencia.
+#
+# Requisitos previos (una sola vez, desde Azure DevOps):
+#   - Service connection de Azure Resource Manager: sc-licitaciones-azure.
+#   - Ambientes «pruebas» y «produccion» (este con aprobación manual).
+#   - Grupo de variables «licita-secretos» con SUBSCRIPTION_ID, OIDC_CLIENT_SECRET y SMTP_CLAVE
+#     (marcadas como secretas) y aplicarTerraform=true cuando exista la suscripción.
+#   - Estado remoto de Terraform: infra/terraform/bootstrap/crear_backend.sh.
 
+parameters:
+  - name: ambientes
+    type: object
+    default:
+      - nombre: pruebas
+        ambienteDevOps: pruebas
+        depende: Construir
+      - nombre: prod
+        ambienteDevOps: produccion
+        depende: Terraform_pruebas
+
+# main recibe la integración de cada sprint y develop la de cada historia (CONTRIBUTING.md).
 trigger:
   branches:
     include:
       - main
-  paths:
+      - develop
+
+pr:
+  branches:
     include:
-      - src/webui/**
-      - docker/webui.Dockerfile
-      - requirements.txt
-      - azure-pipelines.yml
+      - main
+      - develop
+
+# FF-07 también corre cada semana: las bases de vulnerabilidades cambian a diario.
+schedules:
+  - cron: "0 11 * * 1"
+    displayName: Revisión semanal de dependencias (FF-07)
+    branches:
+      include:
+        - main
+    always: true
 
 pool:
   vmImage: ubuntu-latest
 
 variables:
-  conexionAzure: 'sc-licitaciones-azure'
-  grupoRecursos: 'rg-licitaciones-mvp'
-  registro: 'acrlicitacioneslicita01'
-  appWeb: 'ca-licitaciones-webui'
-  imagen: 'webui'
-  # El numero de build hace cada despliegue rastreable hasta su commit.
-  etiqueta: '$(Build.BuildId)'
+  - group: licita-secretos
+  - name: conexionAzure
+    value: 'sc-licitaciones-azure'
+  - name: grupoRecursos
+    value: 'rg-licitaciones-mvp'
+  - name: registro
+    value: 'acrlicitacioneslicita01'
+  - name: appWebHeredada
+    value: 'ca-licitaciones-webui'
+  # El número de build hace cada despliegue rastreable hasta su commit.
+  - name: etiqueta
+    value: '$(Build.BuildId)'
+  - name: versionPython
+    value: '3.12'
+  - name: versionTerraform
+    value: '1.9.8'
 
 stages:
+  - stage: Verificar
+    displayName: Pruebas, aptitud y seguridad
+    jobs:
+      - job: pruebas
+        displayName: Pruebas y funciones de aptitud
+        # Integración contra PostgreSQL con pgvector (Tabla 31, nivel de integración).
+        services:
+          postgres: postgres
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: $(versionPython)
+          - script: |
+              set -euo pipefail
+              python -m pip install --upgrade pip
+              pip install -r requirements-dev.txt
+            displayName: Instalar dependencias
+          - script: |
+              set -euo pipefail
+              python -m pytest tests --ignore=tests/aptitud -q \
+                --junitxml=resultados/pruebas.xml \
+                --cov=src --cov-report=xml:resultados/cobertura.xml --cov-report=term
+            displayName: Pruebas unitarias e integración (con cobertura)
+            env:
+              TEST_DB_CONNECTION_STRING: postgresql://user:password@localhost:5432/licitaciones_test
+          - script: |
+              set -euo pipefail
+              # Tabla 31: cobertura acordada sobre los módulos de dominio.
+              python -m coverage report --fail-under=90 \
+                --include="src/shared/schemas/*,src/worker_analysis/scoring/*,src/worker_analysis/pipeline/*,src/worker_analysis/orchestrator/*,src/worker_analysis/nucleo/*"
+            displayName: Cobertura del dominio (mínimo 90 %)
+          - script: |
+              set -euo pipefail
+              # FF-02, FF-03, FF-04 (reglas de dependencias), FF-05 (rol-operación), FF-08
+              # (idempotencia) y FF-06 (máquina de estados: evaluar sin aprobación).
+              python -m pytest tests/aptitud tests/asr/test_asr12_human_gate.py -q \
+                --junitxml=resultados/aptitud.xml
+            displayName: Funciones de aptitud FF-02 a FF-06 y FF-08
+          - task: PublishTestResults@2
+            condition: succeededOrFailed()
+            inputs:
+              testResultsFormat: JUnit
+              testResultsFiles: resultados/*.xml
+              testRunTitle: Licita
+          - task: PublishCodeCoverageResults@2
+            condition: succeededOrFailed()
+            inputs:
+              summaryFileLocation: resultados/cobertura.xml
+
+      - job: infraestructura
+        displayName: Infraestructura como código (formato y validación)
+        steps:
+          - script: |
+              set -euo pipefail
+              curl -sSfLo terraform.zip \
+                "https://releases.hashicorp.com/terraform/$(versionTerraform)/terraform_$(versionTerraform)_linux_amd64.zip"
+              unzip -o -q terraform.zip -d "$(Agent.ToolsDirectory)/terraform"
+              echo "##vso[task.prependpath]$(Agent.ToolsDirectory)/terraform"
+            displayName: Instalar Terraform $(versionTerraform)
+          - script: |
+              set -euo pipefail
+              terraform fmt -check -recursive
+              terraform init -backend=false -input=false
+              terraform validate
+            displayName: terraform fmt y validate
+            workingDirectory: infra/terraform
+
+      - job: seguridad
+        displayName: Seguridad (FF-07)
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: $(versionPython)
+          - script: |
+              set -euo pipefail
+              python -m pip install --upgrade pip
+              pip install bandit==1.9.4 pip-audit==2.10.1
+            displayName: Instalar Bandit y pip-audit
+          - script: python -m bandit -r src --severity-level high --confidence-level medium
+            displayName: Bandit (severidad alta o crítica detiene la canalización)
+          - script: python -m pip_audit -r requirements.txt --progress-spinner off
+            displayName: pip-audit (vulnerabilidades conocidas en las dependencias)
+
   - stage: Construir
-    displayName: Construir imagen
+    displayName: Construir imágenes
+    dependsOn: Verificar
+    # Solo en la integración a main: ni en solicitudes de incorporación ni en la revisión semanal.
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'), notIn(variables['Build.Reason'], 'PullRequest', 'Schedule'))
     jobs:
       - job: acr_build
         displayName: az acr build
+        strategy:
+          matrix:
+            api:
+              imagen: api
+              dockerfile: docker/api.Dockerfile
+            webui:
+              imagen: webui
+              dockerfile: docker/webui.Dockerfile
+            worker_analisis:
+              imagen: worker-analisis
+              dockerfile: docker/worker_analysis.Dockerfile
+            worker_vigilancia:
+              imagen: worker-vigilancia
+              dockerfile: docker/worker_vigilance.Dockerfile
         steps:
           - task: AzureCLI@2
-            displayName: Construir y publicar en ACR
+            displayName: Construir y publicar $(imagen) en ACR
             inputs:
               azureSubscription: $(conexionAzure)
               scriptType: bash
@@ -49,17 +189,19 @@ stages:
                 az acr build \
                   --registry "$(registro)" \
                   --image "$(imagen):$(etiqueta)" \
-                  --image "$(imagen):latest" \
-                  --file docker/webui.Dockerfile \
+                  --image "$(imagen):rc" \
+                  --file "$(dockerfile)" \
                   .
 
-  - stage: Desplegar
-    displayName: Desplegar a Container Apps
+  # Despliegue que ya existía: actualiza la interfaz creada con infra/provision-webui.ps1.
+  # Se retira cuando el ambiente lo cree Terraform (aplicarTerraform=true).
+  - stage: DesplegarInterfaz
+    displayName: Actualizar la interfaz existente
     dependsOn: Construir
-    condition: succeeded()
+    condition: and(succeeded(), ne(variables.aplicarTerraform, 'true'))
     jobs:
       - deployment: contenedor
-        displayName: Actualizar Container App
+        displayName: az containerapp update
         environment: produccion
         strategy:
           runOnce:
@@ -74,15 +216,75 @@ stages:
                     inlineScript: |
                       set -euo pipefail
                       SERVIDOR=$(az acr show --name "$(registro)" --query loginServer --output tsv)
-
                       az containerapp update \
-                        --name "$(appWeb)" \
+                        --name "$(appWebHeredada)" \
                         --resource-group "$(grupoRecursos)" \
-                        --image "$SERVIDOR/$(imagen):$(etiqueta)"
-
-                      URL=$(az containerapp show \
-                        --name "$(appWeb)" \
-                        --resource-group "$(grupoRecursos)" \
-                        --query "properties.configuration.ingress.fqdn" \
-                        --output tsv)
+                        --image "$SERVIDOR/webui:$(etiqueta)"
+                      URL=$(az containerapp show --name "$(appWebHeredada)" --resource-group "$(grupoRecursos)" \
+                        --query "properties.configuration.ingress.fqdn" --output tsv)
                       echo "Desplegado en: https://$URL"
+
+  - ${{ each ambiente in parameters.ambientes }}:
+    - stage: Terraform_${{ ambiente.nombre }}
+      displayName: Infraestructura y despliegue (${{ ambiente.nombre }})
+      dependsOn: ${{ ambiente.depende }}
+      condition: and(succeeded(), eq(variables.aplicarTerraform, 'true'))
+      jobs:
+        - deployment: terraform
+          displayName: terraform plan y apply
+          # En «produccion» el ambiente exige aprobación manual antes de aplicar.
+          environment: ${{ ambiente.ambienteDevOps }}
+          strategy:
+            runOnce:
+              deploy:
+                steps:
+                  - checkout: self
+                  - script: |
+                      set -euo pipefail
+                      curl -sSLo terraform.zip \
+                        "https://releases.hashicorp.com/terraform/$(versionTerraform)/terraform_$(versionTerraform)_linux_amd64.zip"
+                      unzip -o -q terraform.zip -d "$(Agent.ToolsDirectory)/terraform"
+                      echo "##vso[task.prependpath]$(Agent.ToolsDirectory)/terraform"
+                    displayName: Instalar Terraform $(versionTerraform)
+                  - task: AzureCLI@2
+                    displayName: terraform init, plan y apply
+                    inputs:
+                      azureSubscription: $(conexionAzure)
+                      scriptType: bash
+                      scriptLocation: inlineScript
+                      addSpnToEnvironment: true
+                      workingDirectory: infra/terraform
+                      inlineScript: |
+                        set -euo pipefail
+                        export ARM_CLIENT_ID="$servicePrincipalId" ARM_TENANT_ID="$tenantId"
+                        export ARM_SUBSCRIPTION_ID="$(SUBSCRIPTION_ID)"
+                        if [ -n "${idToken:-}" ]; then
+                          export ARM_USE_OIDC=true ARM_OIDC_TOKEN="$idToken"
+                        else
+                          export ARM_CLIENT_SECRET="$servicePrincipalKey"
+                        fi
+                        SERVIDOR=$(az acr show --name "$(registro)" --query loginServer --output tsv)
+                        terraform init -input=false -backend-config="key=licita-${{ ambiente.nombre }}.tfstate"
+                        terraform plan -input=false -out=plan.tfplan \
+                          -var-file="entornos/${{ ambiente.nombre }}.tfvars" \
+                          -var="subscription_id=$(SUBSCRIPTION_ID)" \
+                          -var="imagen_api=$SERVIDOR/api:$(etiqueta)" \
+                          -var="imagen_web=$SERVIDOR/webui:$(etiqueta)" \
+                          -var="imagen_worker=$SERVIDOR/worker-analisis:$(etiqueta)" \
+                          -var="imagen_vigilancia=$SERVIDOR/worker-vigilancia:$(etiqueta)"
+                        terraform apply -input=false plan.tfplan
+                        terraform output
+                    env:
+                      TF_VAR_oidc_client_secret: $(OIDC_CLIENT_SECRET)
+                      TF_VAR_smtp_clave: $(SMTP_CLAVE)
+
+resources:
+  containers:
+    - container: postgres
+      image: pgvector/pgvector:pg16
+      ports:
+        - 5432:5432
+      env:
+        POSTGRES_USER: user
+        POSTGRES_PASSWORD: password
+        POSTGRES_DB: licitaciones_test

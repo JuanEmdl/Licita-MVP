@@ -1,0 +1,47 @@
+# FF-01 (ASR-01, ASR-02, Tabla 33): prueba de carga con Locust en el ambiente de pruebas.
+# Se ejecuta al cierre de cada sprint (a mano o con la programación de abajo) porque
+# consume cuota de inferencia y crédito de la suscripción. Si el percentil 90 del análisis
+# supera los 10 minutos o alguna tarea no termina, la ejecución queda como fallida y el
+# hallazgo entra al sprint siguiente.
+#
+# Requisitos: grupo de variables «licita-carga» con API_PRUEBAS (URL de la API del ambiente
+# de pruebas, alcanzable desde el agente) y LICITA_TOKEN (sesión de un analista, secreta).
+
+trigger: none
+pr: none
+
+schedules:
+  # Viernes de cierre de sprint (cada dos semanas se ajusta en Azure DevOps).
+  - cron: "0 21 * * 5"
+    displayName: Cierre de sprint (FF-01)
+    branches:
+      include:
+        - main
+    always: true
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - group: licita-carga
+
+jobs:
+  - job: carga
+    displayName: Locust, 10 analistas concurrentes
+    timeoutInMinutes: 60
+    steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.12'
+      - script: pip install locust==2.47.0
+        displayName: Instalar Locust
+      - script: |
+          set -euo pipefail
+          locust -f tests/carga/locustfile.py --headless -u 10 -r 10 --run-time 30m \
+            --host "$(API_PRUEBAS)" --csv resultados/carga --html resultados/carga.html
+        displayName: FF-01 (p90 del análisis ≤ 10 minutos)
+        env:
+          LICITA_TOKEN: $(LICITA_TOKEN)
+      - publish: resultados
+        artifact: resultados-carga
+        condition: succeededOrFailed()

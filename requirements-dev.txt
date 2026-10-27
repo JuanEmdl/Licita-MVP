@@ -1,0 +1,7 @@
+# Herramientas de la canalización (Tablas 31 y 33). No van en las imágenes de producción.
+# pytest ya está fijado en requirements.txt.
+-r requirements.txt
+pytest-cov==7.1.0
+# FF-07: análisis estático y revisión de dependencias (Tabla 58: Bandit 1.7 o superior, pip-audit 2.x).
+bandit==1.9.4
+pip-audit==2.10.1

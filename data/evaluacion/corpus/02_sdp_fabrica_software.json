@@ -1,0 +1,24 @@
+{
+  "nombre": "Secretaría Distrital de Planeación — fábrica de software",
+  "proceso": "CO1.BDOS.10720226",
+  "modalidad": "Licitación pública",
+  "documentos": [
+    "data/evaluacion/pliegos_secop/02_sdp_fabrica_software/IF_PR_600_fab_software - pliego def.pdf",
+    "data/evaluacion/pliegos_secop/02_sdp_fabrica_software/Anexo Tecnico_ Fabrica de Software VF.pdf"
+  ],
+  "nota": "El memorando financiero compara los indicadores con los de otros procesos (TransMilenio, SDM, ADRES, Fiscalía…): esos no son requisitos de este proceso. Los perfiles del anexo técnico se verifican en la ejecución y no en la selección, por eso no entran en la referencia.",
+  "esperados": [
+    {"id": "Liquidez", "claves": ["liquidez", "1,5"], "categoria": "financiero", "habilitante": true, "referencia": "2.1.2", "dictamen": "Cumple"},
+    {"id": "Endeudamiento", "claves": ["endeudamiento", "70"], "categoria": "financiero", "habilitante": true, "referencia": "2.1.2", "dictamen": "No cumple"},
+    {"id": "Cobertura de intereses", "claves": ["cobertura", "2"], "categoria": "financiero", "habilitante": true, "referencia": "2.1.2", "dictamen": "Cumple"},
+    {"id": "Capital de trabajo", "claves": ["capital de trabajo", "36"], "categoria": "financiero", "habilitante": true, "referencia": "2.1.2", "dictamen": null},
+    {"id": "Rentabilidad del patrimonio", "claves": ["patrimonio", "5"], "categoria": "financiero", "habilitante": true, "referencia": "2.1.2", "dictamen": "Cumple"},
+    {"id": "Rentabilidad del activo", "claves": ["activo", "3"], "categoria": "financiero", "habilitante": true, "referencia": "2.1.2", "dictamen": "No cumple"}
+  ],
+  "prohibidos": [["1,52"], ["68%"], ["1,43"], ["69%"], ["1,6"], ["1,04"]],
+  "portafolio": [
+    {"tecnologia": "Indicadores financieros RUP 2025", "categoria": "Financiero", "descripcion": "DATO DE PRUEBA FICTICIO. Información financiera en firme en el RUP con corte a 31 de diciembre de 2025: índice de liquidez 1,9; índice de endeudamiento 72 %; razón de cobertura de intereses 3,1; capital de trabajo $1.500.000.000; rentabilidad del patrimonio (ROE) 12 %; rentabilidad del activo (ROA) 2 %."},
+    {"tecnologia": "Fábrica de software", "categoria": "Experiencia", "descripcion": "DATO DE PRUEBA FICTICIO. Operación de células de desarrollo ágil con líder técnico, analista funcional, dos desarrolladores y un ingeniero de pruebas para entidades distritales."},
+    {"tecnologia": "Soporte de sistemas de información", "categoria": "Experiencia", "descripcion": "DATO DE PRUEBA FICTICIO. Mesa de soporte y corrección de errores con acuerdos de nivel de servicio para tres sistemas de información misionales."}
+  ]
+}

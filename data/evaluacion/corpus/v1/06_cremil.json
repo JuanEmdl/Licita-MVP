@@ -1,0 +1,33 @@
+{
+  "nombre": "CREMIL — página web institucional, ola 1",
+  "proceso": "CO1.BDOS.10584679",
+  "modalidad": "Selección abreviada de menor cuantía",
+  "documentos": [
+    "data/evaluacion/pliegos_secop/06_cremil/2. PLIEGO DE CONDICIONES DEFINITIVO SAMC 011-202 10-09-2026.pdf",
+    "data/evaluacion/pliegos_secop/06_cremil/2.1 ANEXO_TECNICO_SAMC 011-2026 10-09-2026.pdf"
+  ],
+  "nota": "El pliego trae dos juegos de indicadores: gran empresa (la referencia) y Mipyme. Los de Mipyme también son requisitos válidos si se extraen.",
+  "esperados": [
+    {"id": "Liquidez", "claves": ["liquidez", "2.10"], "alternativas": [["liquidez", "2,10"]], "categoria": "financiero", "habilitante": true, "referencia": "5.3.2", "dictamen": "Cumple"},
+    {"id": "Endeudamiento", "claves": ["endeudamiento", "67"], "categoria": "financiero", "habilitante": true, "referencia": "5.3.2", "dictamen": "Cumple"},
+    {"id": "Cobertura de intereses", "claves": ["cobertura", "2.67"], "alternativas": [["cobertura", "2,67"]], "categoria": "financiero", "habilitante": true, "referencia": "5.3.2", "dictamen": "No cumple"},
+    {"id": "Capital de trabajo", "claves": ["capital de trabajo", "70"], "categoria": "financiero", "habilitante": true, "referencia": "5.3.2", "dictamen": null},
+    {"id": "Rentabilidad del patrimonio", "claves": ["patrimonio", "0.15"], "alternativas": [["patrimonio", "0,15"]], "categoria": "financiero", "habilitante": true, "referencia": "5.3.2", "dictamen": "Cumple"},
+    {"id": "Rentabilidad del activo", "claves": ["activo", "0.08"], "alternativas": [["activo", "0,08"]], "categoria": "financiero", "habilitante": true, "referencia": "5.3.2", "dictamen": "Cumple"},
+    {"id": "Experiencia", "claves": ["paginas web", "100"], "categoria": "experiencia", "habilitante": true, "referencia": "5.4.2", "dictamen": null},
+    {"id": "Precio", "claves": ["50 puntos"], "alternativas": [["menor valor"]], "categoria": "financiero", "habilitante": false, "referencia": "6.1.1", "dictamen": "No verificable"},
+    {"id": "Documento técnico ola 2", "claves": ["ola 2"], "categoria": "tecnico", "habilitante": false, "referencia": "6.1.2", "dictamen": "Cumple"},
+    {"id": "Desarrolladores adicionales", "claves": ["frontend"], "alternativas": [["front end"], ["front-end"]], "categoria": "personal", "habilitante": false, "referencia": "6.1.2", "dictamen": "Cumple parcialmente"},
+    {"id": "Empresas de mujeres", "claves": ["mujeres"], "categoria": "juridico", "habilitante": false, "referencia": "6.1.3", "dictamen": "Cumple"},
+    {"id": "Mipyme", "claves": ["mipyme", "0,25"], "alternativas": [["mipyme", "0.25"]], "categoria": "juridico", "habilitante": false, "referencia": null, "dictamen": "No cumple"},
+    {"id": "Industria nacional", "claves": ["industria nacional"], "categoria": "juridico", "habilitante": false, "referencia": null, "dictamen": "Cumple"}
+  ],
+  "prohibidos": [],
+  "portafolio": [
+    {"tecnologia": "Indicadores financieros RUP 2025", "categoria": "Financiero", "descripcion": "DATO DE PRUEBA FICTICIO. Información financiera en firme en el RUP con corte a 31 de diciembre de 2025: índice de liquidez 2,6; índice de endeudamiento 55 %; razón de cobertura de intereses 1,9; capital de trabajo $420.000.000; rentabilidad del patrimonio 0,21; rentabilidad del activo 0,10."},
+    {"tecnologia": "Portales web institucionales", "categoria": "Experiencia", "descripcion": "DATO DE PRUEBA FICTICIO. Cinco contratos de diseño, desarrollo y puesta en producción de páginas web institucionales inscritos en el RUP con los códigos 81111500 y 81111800, por 1.200 SMMLV en total."},
+    {"tecnologia": "Arquitectura e integraciones", "categoria": "Desarrollo", "descripcion": "DATO DE PRUEBA FICTICIO. La empresa elabora sin costo documentos técnicos de arquitectura e integraciones para la fase siguiente de sus proyectos de portales."},
+    {"tecnologia": "Desarrolladores", "categoria": "Equipo de trabajo", "descripcion": "DATO DE PRUEBA FICTICIO. Hay disponible un desarrollador back-end senior para asignar a una fase adicional; la empresa no tiene un desarrollador front-end disponible."},
+    {"tecnologia": "Condición de la empresa", "categoria": "Jurídico", "descripcion": "DATO DE PRUEBA FICTICIO. Sociedad colombiana catalogada como gran empresa (no es Mipyme), acreditada como empresa de mujeres según el Decreto 1860 de 2021, que presta servicios nacionales."}
+  ]
+}

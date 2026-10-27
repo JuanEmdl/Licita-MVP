@@ -1,0 +1,32 @@
+{
+  "nombre": "Corpocesar — sistema de información administrativo y financiero",
+  "proceso": "CO1.BDOS.10633128",
+  "modalidad": "Concurso de méritos abierto",
+  "documentos": [
+    "data/evaluacion/pliegos_secop/04_corpocesar/6-Pliego de Condiciones Definitivos.pdf",
+    "data/evaluacion/pliegos_secop/04_corpocesar/Anexo 1 - Anexo Tecnico - Adenda 01.pdf"
+  ],
+  "esperados": [
+    {"id": "Liquidez", "claves": ["liquidez", "3,00"], "categoria": "financiero", "habilitante": true, "referencia": "3.5", "dictamen": "Cumple"},
+    {"id": "Endeudamiento", "claves": ["endeudamiento", "0,48"], "categoria": "financiero", "habilitante": true, "referencia": "3.5", "dictamen": "Cumple"},
+    {"id": "Cobertura de intereses", "claves": ["cobertura", "4,50"], "categoria": "financiero", "habilitante": true, "referencia": "3.5", "dictamen": "No cumple"},
+    {"id": "Capital de trabajo", "claves": ["capital de trabajo"], "categoria": "financiero", "habilitante": true, "referencia": "3.5", "dictamen": null},
+    {"id": "Rentabilidad del patrimonio", "claves": ["patrimonio", "0,08"], "categoria": "financiero", "habilitante": true, "referencia": "3.8", "dictamen": "Cumple"},
+    {"id": "Rentabilidad del activo", "claves": ["activo", "0,06"], "categoria": "financiero", "habilitante": true, "referencia": "3.8", "dictamen": "No cumple"},
+    {"id": "Experiencia mínima", "claves": ["tres (3) contratos"], "alternativas": [["3 contratos"]], "categoria": "experiencia", "habilitante": true, "referencia": "3.10.1", "dictamen": "Cumple"},
+    {"id": "Experiencia adicional", "claves": ["contrato adicional"], "categoria": "experiencia", "habilitante": false, "referencia": "4.1", "dictamen": null},
+    {"id": "Director o coordinador", "claves": ["director o coordinador"], "alternativas": [["coordinador", "posgrado"]], "categoria": "personal", "habilitante": false, "referencia": "4.2", "dictamen": "Cumple"},
+    {"id": "Administrador de servidores", "claves": ["administrador de servidores"], "categoria": "personal", "habilitante": false, "referencia": "4.2", "dictamen": "No verificable"},
+    {"id": "Plan de calidad", "claves": ["plan de calidad"], "categoria": "tecnico", "habilitante": false, "referencia": "4.3.1", "dictamen": null},
+    {"id": "Industria nacional", "claves": ["industria nacional"], "categoria": "juridico", "habilitante": false, "referencia": "4.5", "dictamen": "Cumple"},
+    {"id": "Personas con discapacidad", "claves": ["discapacidad"], "categoria": "juridico", "habilitante": false, "referencia": "4.6", "dictamen": "No cumple"}
+  ],
+  "prohibidos": [],
+  "portafolio": [
+    {"tecnologia": "Indicadores financieros RUP 2025", "categoria": "Financiero", "descripcion": "DATO DE PRUEBA FICTICIO. Información financiera en firme en el RUP con corte a 31 de diciembre de 2025: liquidez 3,4; nivel de endeudamiento 0,41; razón de cobertura de intereses 3,9; rentabilidad sobre patrimonio 0,11; rentabilidad del activo 0,05; capital de trabajo $850.000.000."},
+    {"tecnologia": "Experiencia en sistemas de información", "categoria": "Experiencia", "descripcion": "DATO DE PRUEBA FICTICIO. Cuatro contratos terminados y recibidos a satisfacción de desarrollo, parametrización e implementación de sistemas de información; dos de ellos son de software administrativo, contable, presupuestal y de facturación para entidades públicas."},
+    {"tecnologia": "Director de proyectos", "categoria": "Equipo de trabajo", "descripcion": "DATO DE PRUEBA FICTICIO. Director de proyectos ingeniero de sistemas con especialización en gerencia de proyectos de TI, siete años como coordinador y diseñador de proyectos de sistemas de información, incluidos proyectos de software contable y financiero."},
+    {"tecnologia": "Sistema de gestión de calidad", "categoria": "Certificación", "descripcion": "DATO DE PRUEBA FICTICIO. Sistema de gestión de calidad certificado ISO 9001:2015; cada proyecto se ejecuta con su plan de calidad."},
+    {"tecnologia": "Condición de la empresa", "categoria": "Jurídico", "descripcion": "DATO DE PRUEBA FICTICIO. Sociedad colombiana que presta servicios nacionales. No tiene personas con discapacidad vinculadas a su planta de personal."}
+  ]
+}

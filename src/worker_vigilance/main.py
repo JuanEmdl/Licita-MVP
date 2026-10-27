@@ -1,20 +1,42 @@
-import asyncio
-import os
-import datetime
+"""
+Trabajador de vigilancia de SECOP II (lectura automática).
 
-async def sincronizar_secop():
-    print(f"[{datetime.datetime.now()}] Iniciando sincronización con SECOP II (Trabajador de vigilancia)...")
-    # TODO: Consultar procesos en SECOP II basados en perfiles de búsqueda
-    # TODO: Detectar cambios y generar alertas
-    print("Sincronización completada.")
+Ejecuta un barrido real contra Datos Abiertos y registra las oportunidades
+afines al portafolio en la tabla alertas_oportunidad, que la interfaz muestra en
+la pestaña Vigilancia. Con VIGILANCIA_INTERVALO_MIN > 0 repite el barrido de
+forma continua; con 0 (por defecto) hace uno y termina, para programarlo como
+tarea (cron de Container Apps, Programador de tareas de Windows, etc.).
+"""
+import logging
+import sys
+import time
 
-async def main():
-    print("Iniciando trabajador de vigilancia programada...")
-    # Mock scheduler
+from src.shared import telemetria
+from src.shared.config import obtener_configuracion
+from src.shared.database import init_db
+from src.worker_vigilance.servicio import ServicioVigilancia
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+logger = logging.getLogger("Vigilancia")
+
+
+def iniciar() -> None:
+    config = obtener_configuracion()
+    telemetria.configurar("worker-vigilancia")
+    init_db()
+    servicio = ServicioVigilancia()
     while True:
-        await sincronizar_secop()
-        # En producción esto sería disparado por un cron o Container Apps Job (DA-12)
-        await asyncio.sleep(3600) # Sleep 1 hour
+        resultado = servicio.barrer()
+        if resultado["estado"] == "fallido":
+            logger.error(f"Barrido fallido: {resultado.get('mensaje')}")
+        if config.vigilancia_intervalo_min <= 0:
+            return
+        logger.info(f"Próximo barrido en {config.vigilancia_intervalo_min} minutos.")
+        time.sleep(config.vigilancia_intervalo_min * 60)
+
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        iniciar()
+    except KeyboardInterrupt:
+        sys.exit(0)

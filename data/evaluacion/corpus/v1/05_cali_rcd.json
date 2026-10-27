@@ -1,0 +1,27 @@
+{
+  "nombre": "Alcaldía de Santiago de Cali — plataforma RCD",
+  "proceso": "CO1.BDOS.10053173",
+  "modalidad": "Concurso de méritos abierto",
+  "documentos": ["data/evaluacion/pliegos_secop/05_cali_rcd/PLIEGO DE CONDICIONES DEFINITIVO PLATAFORMA RCD.docx.pdf"],
+  "nota": "El numeral 4.1 dice «25 puntos» en el título y 34.5 en la tabla: el texto extraído debe conservar la cifra que transcribe sin corregirla.",
+  "esperados": [
+    {"id": "Liquidez", "claves": ["liquidez", "1,50"], "categoria": "financiero", "habilitante": true, "referencia": "3.3", "dictamen": "Cumple"},
+    {"id": "Endeudamiento", "claves": ["endeudamiento", "56"], "categoria": "financiero", "habilitante": true, "referencia": "3.3", "dictamen": "No cumple"},
+    {"id": "Cobertura de intereses", "claves": ["cobertura", "4,56"], "categoria": "financiero", "habilitante": true, "referencia": "3.3", "dictamen": "Cumple"},
+    {"id": "Rentabilidad del patrimonio", "claves": ["patrimonio", "0,08"], "categoria": "financiero", "habilitante": true, "referencia": "13.6", "dictamen": "No cumple"},
+    {"id": "RUP", "claves": ["registro unico de proponentes"], "alternativas": [["rup", "inscri"]], "categoria": "juridico", "habilitante": true, "referencia": "3.1.9", "dictamen": "Cumple"},
+    {"id": "Experiencia adicional", "claves": ["residuos"], "categoria": "experiencia", "habilitante": false, "referencia": "4.1", "dictamen": "Cumple parcialmente"},
+    {"id": "Formación del líder técnico", "claves": ["lider tecnico"], "categoria": "personal", "habilitante": false, "referencia": "4.2", "dictamen": "Cumple"},
+    {"id": "Soporte técnico adicional", "claves": ["soporte tecnico adicional"], "alternativas": [["soporte", "un (1) ano"]], "categoria": "tecnico", "habilitante": false, "referencia": "4.3", "dictamen": "Cumple"},
+    {"id": "Industria nacional", "claves": ["industria nacional"], "categoria": "juridico", "habilitante": false, "referencia": "4.4", "dictamen": "Cumple"}
+  ],
+  "prohibidos": [],
+  "portafolio": [
+    {"tecnologia": "Indicadores financieros RUP 2025", "categoria": "Financiero", "descripcion": "DATO DE PRUEBA FICTICIO. Información financiera en firme en el RUP con corte a 31 de diciembre de 2025: índice de liquidez 2,1; índice de endeudamiento 61 %; razón de cobertura de intereses 5,2; rentabilidad del patrimonio 0,07."},
+    {"tecnologia": "Registro Único de Proponentes", "categoria": "Jurídico", "descripcion": "DATO DE PRUEBA FICTICIO. Inscripción vigente y en firme en el Registro Único de Proponentes."},
+    {"tecnologia": "Plataformas de gestión de residuos", "categoria": "Experiencia", "descripcion": "DATO DE PRUEBA FICTICIO. Un (1) contrato inscrito en el RUP para desarrollar la plataforma de gestión de residuos de construcción y demolición de un municipio, por 900 SMMLV. No hay un segundo contrato de ese tipo."},
+    {"tecnologia": "Líder técnico", "categoria": "Equipo de trabajo", "descripcion": "DATO DE PRUEBA FICTICIO. Líder técnico de proyectos con maestría en ingeniería de software y ocho años de experiencia."},
+    {"tecnologia": "Soporte extendido", "categoria": "Servicios", "descripcion": "DATO DE PRUEBA FICTICIO. Política comercial de soporte técnico adicional de un año sin costo después de terminar cada contrato, con mejoras de rendimiento y seguridad."},
+    {"tecnologia": "Condición de la empresa", "categoria": "Jurídico", "descripcion": "DATO DE PRUEBA FICTICIO. Sociedad colombiana que presta servicios nacionales con personal colombiano."}
+  ]
+}

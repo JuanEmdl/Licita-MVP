@@ -1,0 +1,17 @@
+PLIEGO DE PRUEBA FICTICIO PARA VALIDAR EL FLUJO (no corresponde a un proceso real).
+
+3.1 REQUISITOS HABILITANTES JURÍDICOS
+El proponente deberá estar inscrito en el Registro Único de Proponentes (RUP) con renovación vigente.
+
+3.2 CAPACIDAD FINANCIERA (HABILITANTE)
+Índice de liquidez mayor o igual a 1,5. Nivel de endeudamiento menor o igual al 60 %.
+
+3.3 EXPERIENCIA HABILITANTE
+El proponente deberá acreditar mínimo dos (2) contratos de desarrollo de software con entidades públicas, cuya sumatoria sea igual o superior a 1.000 SMMLV, clasificados en el código UNSPSC 81111500.
+
+3.4 REQUISITOS TÉCNICOS
+La solución deberá desplegarse en una nube pública con centro de datos certificado. El proponente deberá contar con certificación ISO/IEC 27001 vigente.
+
+4. FACTORES DE PONDERACIÓN
+4.1 Se otorgarán hasta 20 puntos al proponente que acredite un gerente de proyecto con certificación PMP y mínimo 10 años de experiencia.
+4.2 Se otorgarán 10 puntos por acreditar experiencia en desarrollo con Java y Spring Boot.

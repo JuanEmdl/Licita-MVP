@@ -1,5 +1,19 @@
 # Despliegue en Azure
 
+> **Infraestructura completa con Terraform (Anexo G):** `infra/terraform` declara la red, PostgreSQL
+> con pgvector, Service Bus, Storage con informes inmutables, Key Vault, Azure OpenAI, las cuatro
+> unidades en Container Apps y las alertas de la Tabla 49. Pasos:
+>
+> 1. Una sola vez: `az login` y `./infra/terraform/bootstrap/crear_backend.sh` (estado remoto).
+> 2. `terraform -chdir=infra/terraform init -backend-config="key=licita-pruebas.tfstate"`
+> 3. `terraform -chdir=infra/terraform plan -var-file=entornos/pruebas.tfvars -var="subscription_id=<id>" -out=plan.tfplan`
+>    (secretos opcionales por `TF_VAR_oidc_client_secret` y `TF_VAR_smtp_clave`)
+> 4. `terraform -chdir=infra/terraform apply plan.tfplan`
+> 5. Registrar `<url_interfaz>/auth/callback` como URI de redirección del App Registration.
+>
+> La canalización (`azure-pipelines.yml`) hace lo mismo cuando la variable `aplicarTerraform` es
+> `true`. Lo que sigue describe la primera vuelta, que publicó solo la interfaz.
+
 Guía para publicar el MVP. Esta primera vuelta despliega **solo la interfaz
 web** con sus datos mock: sin base de datos, sin workers y sin Service Bus.
 La idea es validar la cadena de despliegue completa antes de encender servicios

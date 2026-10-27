@@ -1,0 +1,39 @@
+{
+  "nombre": "Distrito de Medellín — soporte, evolución y desarrollo de sistemas",
+  "proceso": "CO1.BDOS.10262166",
+  "modalidad": "Licitación pública",
+  "documentos": [
+    "data/evaluacion/pliegos_secop/03_medellin_sistemas/14.FO-GECO-016PliegoCondLicPubDifObraSECOPII_v9.pdf",
+    "data/evaluacion/pliegos_secop/03_medellin_sistemas/15.Anexo técnico 41391_11052026 Pliego.pdf"
+  ],
+  "nota": "El pliego organiza los capítulos con letras (B. Experiencia, C. Capacidad financiera) y no con numerales: la referencia esperada queda vacía.",
+  "esperados": [
+    {"id": "Liquidez", "claves": ["liquidez", "1,3"], "categoria": "financiero", "habilitante": true, "referencia": null, "dictamen": "Cumple"},
+    {"id": "Endeudamiento", "claves": ["endeudamiento", "0,70"], "categoria": "financiero", "habilitante": true, "referencia": null, "dictamen": "Cumple"},
+    {"id": "Cobertura de intereses", "claves": ["cobertura", "1,0"], "categoria": "financiero", "habilitante": true, "referencia": null, "dictamen": "No cumple"},
+    {"id": "Rentabilidad del patrimonio", "claves": ["patrimonio", "0,04"], "categoria": "financiero", "habilitante": true, "referencia": null, "dictamen": "Cumple"},
+    {"id": "Rentabilidad del activo", "claves": ["activo", "0,02"], "categoria": "financiero", "habilitante": true, "referencia": null, "dictamen": "No cumple"},
+    {"id": "Experiencia general", "claves": ["contratos", "100"], "categoria": "experiencia", "habilitante": true, "referencia": null, "dictamen": null},
+    {"id": "RUP", "claves": ["registro unico de proponentes"], "alternativas": [["rup", "firme"]], "categoria": "juridico", "habilitante": true, "referencia": null, "dictamen": "Cumple"},
+    {"id": "Precio", "claves": ["600"], "categoria": "financiero", "habilitante": false, "referencia": null, "dictamen": "No verificable"},
+    {"id": "Certificación Azure", "claves": ["azure", "certificacion vigente"], "categoria": "personal", "habilitante": false, "referencia": null, "dictamen": "Cumple"},
+    {"id": "Experiencia en Azure", "claves": ["azure", "experiencia profesional"], "categoria": "personal", "habilitante": false, "referencia": null, "dictamen": null},
+    {"id": "Certificación en inteligencia artificial", "claves": ["inteligencia artificial", "certificacion vigente"], "categoria": "personal", "habilitante": false, "referencia": null, "dictamen": "No verificable"},
+    {"id": "Experiencia en inteligencia artificial", "claves": ["inteligencia artificial", "experiencia profesional"], "categoria": "personal", "habilitante": false, "referencia": null, "dictamen": null},
+    {"id": "Certificación en metodologías ágiles", "claves": ["agiles", "certificacion vigente"], "categoria": "personal", "habilitante": false, "referencia": null, "dictamen": "Cumple"},
+    {"id": "Experiencia en metodologías ágiles", "claves": ["agiles", "experiencia profesional"], "categoria": "personal", "habilitante": false, "referencia": null, "dictamen": null},
+    {"id": "Industria nacional", "claves": ["industria nacional"], "categoria": "juridico", "habilitante": false, "referencia": null, "dictamen": "Cumple"},
+    {"id": "Personas con discapacidad", "claves": ["discapacidad"], "categoria": "juridico", "habilitante": false, "referencia": null, "dictamen": "No verificable"},
+    {"id": "Empresas de mujeres", "claves": ["mujeres"], "categoria": "juridico", "habilitante": false, "referencia": null, "dictamen": "No cumple"},
+    {"id": "Mipyme", "claves": ["mipyme", "puntos"], "categoria": "juridico", "habilitante": false, "referencia": null, "dictamen": "Cumple"}
+  ],
+  "prohibidos": [],
+  "portafolio": [
+    {"tecnologia": "Indicadores financieros RUP 2025", "categoria": "Financiero", "descripcion": "DATO DE PRUEBA FICTICIO. Información financiera en firme en el RUP con corte a 31 de diciembre de 2025: índice de liquidez 1,8; índice de endeudamiento 0,62; razón de cobertura de intereses 0,8; rentabilidad del patrimonio 0,09; rentabilidad del activo 0,015."},
+    {"tecnologia": "Registro Único de Proponentes", "categoria": "Jurídico", "descripcion": "DATO DE PRUEBA FICTICIO. Inscripción en el Registro Único de Proponentes vigente y en firme, con los códigos UNSPSC 81111500, 81111600 y 81112200."},
+    {"tecnologia": "Experiencia en desarrollo y soporte", "categoria": "Experiencia", "descripcion": "DATO DE PRUEBA FICTICIO. Seis contratos de desarrollo, evolución, soporte y mantenimiento de software registrados en el RUP por 3.000 SMMLV en total."},
+    {"tecnologia": "Microsoft Azure", "categoria": "Equipo de trabajo", "descripcion": "DATO DE PRUEBA FICTICIO. Un ingeniero de la planta tiene la certificación vigente Microsoft Certified: Azure Developer Associate (AZ-204) y cuatro años de experiencia profesional en Azure."},
+    {"tecnologia": "Metodologías ágiles", "categoria": "Equipo de trabajo", "descripcion": "DATO DE PRUEBA FICTICIO. La gerente de proyectos tiene certificación vigente Professional Scrum Master (PSM I) y seis años de experiencia profesional en proyectos ágiles."},
+    {"tecnologia": "Condición de la empresa", "categoria": "Jurídico", "descripcion": "DATO DE PRUEBA FICTICIO. Sociedad colombiana clasificada como mediana empresa (Mipyme) según el RUP; presta servicios nacionales. No acredita la condición de emprendimiento o empresa de mujeres."}
+  ]
+}

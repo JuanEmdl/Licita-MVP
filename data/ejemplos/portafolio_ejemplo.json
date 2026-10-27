@@ -1,0 +1,7 @@
+[
+  {"tecnologia": "EJEMPLO - Python / FastAPI", "categoria": "Desarrollo", "descripcion": "DATO DE PRUEBA FICTICIO. Desarrollo de APIs REST con Python y FastAPI en 4 proyectos ejecutados entre 2021 y 2025."},
+  {"tecnologia": "EJEMPLO - Microsoft Azure", "categoria": "Infraestructura", "descripcion": "DATO DE PRUEBA FICTICIO. Despliegue de aplicaciones en Azure App Service y Azure Container Apps con PostgreSQL administrado."},
+  {"tecnologia": "EJEMPLO - ISO/IEC 27001", "categoria": "Certificación", "descripcion": "DATO DE PRUEBA FICTICIO. Certificación ISO/IEC 27001 de seguridad de la información vigente hasta diciembre de 2027."},
+  {"tecnologia": "EJEMPLO - Experiencia sector público", "categoria": "Experiencia", "descripcion": "DATO DE PRUEBA FICTICIO. Dos contratos ejecutados con entidades públicas para desarrollo de software a la medida, por valor total de 1.200 SMMLV, código UNSPSC 81111500."},
+  {"tecnologia": "EJEMPLO - Equipo de trabajo", "categoria": "Experiencia", "descripcion": "DATO DE PRUEBA FICTICIO. Gerente de proyecto con certificación PMP y 8 años de experiencia; dos desarrolladores senior con 5 años de experiencia en Python."}
+]

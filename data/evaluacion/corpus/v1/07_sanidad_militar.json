@@ -1,0 +1,34 @@
+{
+  "nombre": "Dirección General de Sanidad Militar — plataforma SALUD.SIS",
+  "proceso": "CO1.BDOS.9898908",
+  "modalidad": "Selección abreviada de menor cuantía",
+  "documentos": [
+    "data/evaluacion/pliegos_secop/07_sanidad_militar/SOPORTE ELECTRÓNICO AL PLIEGO DEFINITIVO 2026.pdf",
+    "data/evaluacion/pliegos_secop/07_sanidad_militar/FORMULARIO No. 8 ESPECIFICACIONES TÉCNICAS MÍNIMAS EXCLUYENTES PD.pdf"
+  ],
+  "esperados": [
+    {"id": "Liquidez", "claves": ["liquidez", "1.5"], "alternativas": [["liquidez", "1,5"]], "categoria": "financiero", "habilitante": true, "referencia": "11.3.3", "dictamen": "Cumple"},
+    {"id": "Endeudamiento", "claves": ["endeudamiento", "66"], "categoria": "financiero", "habilitante": true, "referencia": "11.3.3", "dictamen": "No cumple"},
+    {"id": "Cobertura de intereses", "claves": ["cobertura"], "categoria": "financiero", "habilitante": true, "referencia": "11.3.3", "dictamen": "Cumple"},
+    {"id": "Rentabilidad del patrimonio", "claves": ["rentabilidad del patrimonio"], "alternativas": [["patrimonio", "9"]], "categoria": "financiero", "habilitante": true, "referencia": "11.3.3", "dictamen": "Cumple"},
+    {"id": "Rentabilidad del activo", "claves": ["rentabilidad del activo"], "alternativas": [["activo", "0.03"], ["activo", "3%"]], "categoria": "financiero", "habilitante": true, "referencia": "11.3.3", "dictamen": "No cumple"},
+    {"id": "Capital de trabajo", "claves": ["capital de trabajo"], "categoria": "financiero", "habilitante": true, "referencia": "11.3.3", "dictamen": null},
+    {"id": "Videos ilustrativos", "claves": ["videos"], "categoria": "tecnico", "habilitante": false, "referencia": "11.4.2", "dictamen": "Cumple"},
+    {"id": "CMMI DEV", "claves": ["cmmi", "dev"], "categoria": "tecnico", "habilitante": false, "referencia": "11.4.2", "dictamen": "Cumple parcialmente"},
+    {"id": "CMMI SVC", "claves": ["cmmi", "svc"], "categoria": "tecnico", "habilitante": false, "referencia": "11.4.2", "dictamen": "No cumple"},
+    {"id": "Certificaciones del sector salud", "claves": ["sector salud"], "alternativas": [["salud", "seis (6) meses"]], "categoria": "experiencia", "habilitante": false, "referencia": "11.4.2", "dictamen": null},
+    {"id": "Capacitación técnica", "claves": ["capacitacion", "oracle"], "categoria": "tecnico", "habilitante": false, "referencia": "11.4.2", "dictamen": "Cumple"},
+    {"id": "Precio", "claves": ["400"], "categoria": "financiero", "habilitante": false, "referencia": "11.4.3", "dictamen": "No verificable"},
+    {"id": "Industria nacional", "claves": ["industria nacional"], "categoria": "juridico", "habilitante": false, "referencia": "11.4.3.1", "dictamen": "Cumple"},
+    {"id": "Personas con discapacidad", "claves": ["discapacidad"], "categoria": "juridico", "habilitante": false, "referencia": "11.4.3.2", "dictamen": "No verificable"}
+  ],
+  "prohibidos": [],
+  "portafolio": [
+    {"tecnologia": "Indicadores financieros RUP 2025", "categoria": "Financiero", "descripcion": "DATO DE PRUEBA FICTICIO. Información financiera en firme en el RUP con corte a 31 de diciembre de 2025: liquidez 1,7; endeudamiento 70 %; cobertura de intereses 4,0; rentabilidad del patrimonio 12 %; rentabilidad del activo 2 %; capital de trabajo $700.000.000."},
+    {"tecnologia": "Videos tutoriales", "categoria": "Servicios", "descripcion": "DATO DE PRUEBA FICTICIO. Producción de videos tutoriales de las funcionalidades de las plataformas entregadas, con un mínimo de doce videos por proyecto."},
+    {"tecnologia": "CMMI", "categoria": "Certificación", "descripcion": "DATO DE PRUEBA FICTICIO. Evaluación CMMI DEV nivel de madurez 3 (Defined) vigente, con Appraisal Disclosure Statement publicado. La empresa no cuenta con evaluación CMMI SVC."},
+    {"tecnologia": "Experiencia en salud", "categoria": "Experiencia", "descripcion": "DATO DE PRUEBA FICTICIO. Contrato de doce meses con una E.S.E. hospitalaria para soporte de su sistema de información en salud por $1.000.000.000."},
+    {"tecnologia": "Capacitación técnica", "categoria": "Servicios", "descripcion": "DATO DE PRUEBA FICTICIO. Programa de capacitación técnica en administración de bases de datos Oracle, seguridad de la información, ciberseguridad y servicios en la nube de Microsoft Azure."},
+    {"tecnologia": "Condición de la empresa", "categoria": "Jurídico", "descripcion": "DATO DE PRUEBA FICTICIO. Sociedad colombiana que presta servicios nacionales con personal colombiano."}
+  ]
+}

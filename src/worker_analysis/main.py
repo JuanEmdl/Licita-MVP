@@ -1,170 +1,100 @@
-import asyncio
-import os
-from typing import TypedDict, Annotated, Sequence, Optional
-from langgraph.graph import StateGraph, END
-from langgraph.checkpoint.postgres import PostgresSaver
-from psycopg_pool import ConnectionPool
+"""
+Trabajador de análisis multi-agente (ASR-11).
+Consume la cola de Azure Service Bus y ejecuta o reanuda el grafo de LangGraph.
+Los checkpoints viven en PostgreSQL, así que una tarea pausada en la compuerta
+humana puede reanudarla cualquier réplica del worker.
+"""
+import json
+import logging
+import sys
+import time
 
-from src.shared.database import DATABASE_URL, get_db
-from src.shared.portfolio_repo import PortfolioRepository
+from azure.servicebus import AutoLockRenewer, ServiceBusClient
 
-from src.worker_analysis.agents import (
-    guardia_documental,
-    segmentador_documental,
-    agente_extractor,
-    agente_evaluador,
-    motor_puntaje,
-    generador_recomendacion
-)
+from opentelemetry import context as contexto_otel
 
-# 1. Define the state for the Orquestador del flujo de análisis
-class AnalysisState(TypedDict):
-    licitacion_id: str
-    expediente: str
-    es_seguro: bool
-    fragmentos: list[str]
-    requisitos_extraidos: list
-    analista_aprobado: bool
-    dictamenes: list
-    puntaje: int
-    categoria_recomendacion: str
-    justificacion_recomendacion: str
-    informe_path: str
-    error: Optional[str]
+from src.shared import telemetria
+from src.shared.config import obtener_configuracion
+from src.shared.database import init_db
+from src.shared.longitud_cola import LectorLongitudCola
+from src.worker_analysis.servicio import ReintentoPendienteError, espera_antes_de_reintentar, obtener_servicio
 
-# 2. Define the workflow nodes
-async def recuperar_expediente_node(state: AnalysisState):
-    print(f"Recuperando expediente para {state['licitacion_id']} desde SECOP II...")
-    # Mock retrieval
-    return {"expediente": "Contenido simulado del pliego de condiciones..."}
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+logger = logging.getLogger("worker_analysis")
 
-async def guardia_documental_node(state: AnalysisState):
-    print("Ejecutando guardia documental (ASR-10)...")
-    es_seguro = guardia_documental(state['expediente'])
-    return {"es_seguro": es_seguro}
+# Un análisis completo puede tardar varios minutos: el bloqueo del mensaje se
+# renueva mientras dura para que Service Bus no lo entregue a otra réplica.
+DURACION_MAXIMA_BLOQUEO_S = 60 * 60
 
-def verificar_seguridad(state: AnalysisState):
-    if state.get("es_seguro"):
-        return "segmentar"
-    else:
-        return "suspender"
 
-async def suspender_node(state: AnalysisState):
-    print("Flujo suspendido por sospecha de inyección de prompt.")
-    return {"error": "Sospecha de inyección de prompt"}
+def escuchar_cola() -> None:
+    config = obtener_configuracion()
+    config.registrar_diagnostico("worker")
+    telemetria.configurar("worker-analisis")
+    if not config.usa_service_bus:
+        logger.warning(
+            "SERVICE_BUS_CONNECTION_STRING no está definida: la API ejecuta los análisis en su "
+            "propio proceso y este worker no tiene cola que consumir. Saliendo."
+        )
+        return
 
-async def segmentar_node(state: AnalysisState):
-    print("Segmentando documento...")
-    fragmentos = segmentador_documental(state['expediente'])
-    return {"fragmentos": fragmentos}
+    init_db()
+    # Tabla 49: mensajes en espera y en la cola de fallidos, exportados con las demás métricas.
+    telemetria.observar_longitud_cola(
+        LectorLongitudCola(config.service_bus_connection_string, config.service_bus_queue_name))
+    servicio = obtener_servicio()
+    logger.info(f"Escuchando la cola '{config.service_bus_queue_name}'...")
 
-async def extraer_requisitos_node(state: AnalysisState):
-    print("Extrayendo requisitos (Agente Extractor)...")
-    lista_reqs = agente_extractor(state['fragmentos'])
-    return {"requisitos_extraidos": [r.model_dump() for r in lista_reqs.requisitos]}
+    with ServiceBusClient.from_connection_string(config.service_bus_connection_string) as cliente, \
+            AutoLockRenewer(max_lock_renewal_duration=DURACION_MAXIMA_BLOQUEO_S) as renovador:
+        with cliente.get_queue_receiver(queue_name=config.service_bus_queue_name) as receptor:
+            for mensaje in receptor:
+                renovador.register(receptor, mensaje)
+                cuerpo = {}
+                ficha = None
+                try:
+                    cuerpo = json.loads(str(mensaje))
+                    # Continúa la traza que empezó la API al aceptar la solicitud.
+                    ficha = contexto_otel.attach(telemetria.extraer_contexto(cuerpo.get("traza")))
+                    with telemetria.medir("procesar mensaje", tipo=cuerpo.get("tipo_tarea"),
+                                          tarea_id=cuerpo.get("tarea_id"), entrega=mensaje.delivery_count):
+                        servicio.procesar_mensaje(cuerpo)
+                except ReintentoPendienteError:
+                    # ASR-07: el proveedor no respondió. Las etapas cerradas están en el checkpoint;
+                    # el mensaje vuelve a la cola y, agotadas las entregas, pasa a mensajes fallidos.
+                    entregas = (mensaje.delivery_count or 0) + 1
+                    if entregas >= config.service_bus_max_entregas:
+                        servicio.marcar_fallida_por_reintentos(cuerpo["tarea_id"], entregas)
+                        receptor.dead_letter_message(mensaje, reason="proveedor_no_disponible",
+                                                     error_description=f"{entregas} entregas sin respuesta")
+                    else:
+                        # El renovador mantiene el bloqueo mientras se espera (DEF-02).
+                        time.sleep(espera_antes_de_reintentar(entregas))
+                        receptor.abandon_message(mensaje)
+                    continue
+                except (json.JSONDecodeError, KeyError, ValueError) as e:
+                    # Mensaje mal formado: reintentarlo no lo arregla.
+                    logger.error(f"Mensaje inválido enviado a dead-letter: {e}")
+                    receptor.dead_letter_message(mensaje, reason="mensaje_invalido", error_description=str(e))
+                    continue
+                except Exception:
+                    # Falla de infraestructura (p. ej. base de datos caída) antes de que el
+                    # servicio pudiera registrar el estado: se devuelve el mensaje a la cola
+                    # para reintentarlo; Service Bus lo envía a dead-letter tras MaxDeliveryCount.
+                    logger.exception("Error inesperado procesando el mensaje; se devuelve a la cola.")
+                    receptor.abandon_message(mensaje)
+                    continue
+                finally:
+                    if ficha is not None:
+                        contexto_otel.detach(ficha)
+                # Las fallas del análisis ya quedaron registradas en la tarea por el
+                # servicio; se completa el mensaje para no repetir llamadas costosas al modelo.
+                receptor.complete_message(mensaje)
 
-# ASR-12: Compuerta de revisión humana
-def human_review_node(state: AnalysisState):
-    print("Esperando aprobación del analista (el flujo se detiene aquí hasta recibir confirmación)...")
-    # In a real LangGraph setup with checkpoints, execution halts here and resumes on external input
-    return state
-
-async def evaluar_requisitos_node(state: AnalysisState):
-    print("Evaluando requisitos (Agente Evaluador)...")
-    
-    with get_db() as db:
-        repo = PortfolioRepository(db)
-        dictamenes = agente_evaluador(state['requisitos_extraidos'], repo)
-        
-    return {"dictamenes": [d.model_dump() for d in dictamenes.dictamenes]}
-
-async def calcular_puntaje_node(state: AnalysisState):
-    print("Calculando puntaje (Motor determinista)...")
-    # Reglas mock versionadas
-    reglas = {"peso_por_defecto": 20}
-    puntaje = motor_puntaje(state['dictamenes'], reglas)
-    return {"puntaje": puntaje}
-
-async def recomendar_node(state: AnalysisState):
-    print("Generando recomendación comercial...")
-    umbrales = {"ofertar": 80, "revision": 50}
-    resultado = generador_recomendacion(state['puntaje'], state['dictamenes'], umbrales)
-    return {
-        "categoria_recomendacion": resultado["categoria"],
-        "justificacion_recomendacion": resultado["justificacion"]
-    }
-
-async def generar_informe_node(state: AnalysisState):
-    print("Generando informe PDF con huella SHA-256 (ASR-06)...")
-    return {"informe_path": f"/blob/informe_{state['licitacion_id']}.pdf"}
-
-# 3. Build the graph
-workflow = StateGraph(AnalysisState)
-
-workflow.add_node("recuperar", recuperar_expediente_node)
-workflow.add_node("guardia", guardia_documental_node)
-workflow.add_node("suspender", suspender_node)
-workflow.add_node("segmentar", segmentar_node)
-workflow.add_node("extraer", extraer_requisitos_node)
-workflow.add_node("revision_humana", human_review_node)
-workflow.add_node("evaluar", evaluar_requisitos_node)
-workflow.add_node("puntuar", calcular_puntaje_node)
-workflow.add_node("recomendar", recomendar_node)
-workflow.add_node("informe", generar_informe_node)
-
-workflow.set_entry_point("recuperar")
-workflow.add_edge("recuperar", "guardia")
-
-# Conditional edge after Guardia Documental
-workflow.add_conditional_edges(
-    "guardia",
-    verificar_seguridad,
-    {"segmentar": "segmentar", "suspender": "suspender"}
-)
-
-workflow.add_edge("suspender", END)
-workflow.add_edge("segmentar", "extraer")
-workflow.add_edge("extraer", "revision_humana")
-
-# Compuerta de revisión (Se reanudaría externamente hacia evaluar)
-workflow.add_edge("revision_humana", "evaluar") 
-workflow.add_edge("evaluar", "puntuar")
-workflow.add_edge("puntuar", "recomendar")
-workflow.add_edge("recomendar", "informe")
-workflow.add_edge("informe", END)
-
-# In production, compile with checkpointer=PostgresSaver(...)
-# app = workflow.compile()
-
-async def process_message_from_queue():
-    print("Iniciando escucha en Service Bus y conectando a Postgres para Checkpoints...")
-    
-    # Setup Postgres Checkpointer
-    pool = ConnectionPool(conninfo=DATABASE_URL)
-    checkpointer = PostgresSaver(pool)
-    checkpointer.setup() # Asegura que la tabla de checkpoints exista
-    
-    app = workflow.compile(checkpointer=checkpointer)
-    
-    # Mocking a workflow execution
-    initial_state = {"licitacion_id": "SECOP-2026-001"}
-    print(f"Ejecutando orquestador para {initial_state['licitacion_id']}")
-    
-    # The config requires a thread_id for checkpointing
-    config = {"configurable": {"thread_id": "tarea_SECOP-2026-001"}}
-    
-    # Run the graph until the human review node (or end if suspended)
-    async for event in app.astream(initial_state, config=config):
-        for node_name, node_state in event.items():
-            print(f"--- Nodo completado: {node_name} ---")
-            
-    print("Flujo pausado o completado.")
-    
-    # Example of how to resume after human approval
-    # state_to_update = {"analista_aprobado": True}
-    # async for event in app.astream(state_to_update, config=config):
-    #     ...
 
 if __name__ == "__main__":
-    print("Iniciando trabajador de análisis multi-agente...")
-    asyncio.run(process_message_from_queue())
+    logger.info("Iniciando trabajador de análisis multi-agente...")
+    try:
+        escuchar_cola()
+    except KeyboardInterrupt:
+        sys.exit(0)

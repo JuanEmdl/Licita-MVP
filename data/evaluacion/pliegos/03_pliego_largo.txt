@@ -1,0 +1,70 @@
+PLIEGO DE PRUEBA FICTICIO PARA EVALUAR LOS PROMPTS EN DOCUMENTOS DE VARIOS FRAGMENTOS (no corresponde a un proceso real).
+
+CAPÍTULO 1. INFORMACIÓN GENERAL
+
+1.1 ANTECEDENTES
+La entidad ficticia que adelanta este proceso administra un conjunto de trámites en línea que hoy se atienden con aplicaciones aisladas, desarrolladas en distintas épocas y con tecnologías que ya no reciben soporte del fabricante. Durante los últimos años la demanda de servicios digitales creció de manera sostenida, lo que llevó a la entidad a formular un plan de modernización que contempla la unificación de los trámites en una sola plataforma, la migración de la información histórica y la adopción de prácticas de desarrollo que permitan entregar mejoras de forma continua. El presente documento describe las condiciones bajo las cuales se seleccionará al contratista que acompañará esa modernización.
+
+1.2 JUSTIFICACIÓN
+La entidad realizó un estudio de mercado en el que consultó a varias empresas del sector de tecnologías de la información. El estudio permitió establecer el presupuesto oficial, el plazo razonable de ejecución y las condiciones técnicas que el mercado está en capacidad de ofrecer. También identificó riesgos asociados a la migración de datos, a la disponibilidad de los servicios durante la transición y a la gestión del cambio con los funcionarios que usan las aplicaciones actuales. Estos riesgos se tratan en la matriz de riesgos publicada junto con el presente pliego.
+
+1.3 DEFINICIONES
+Para efectos del presente pliego se entiende por plataforma el conjunto de componentes de software, bases de datos y servicios de integración que soportan los trámites en línea; por migración, el traslado de la información de las aplicaciones actuales a la plataforma, con su respectiva validación; por entrega, cada versión de la plataforma que se pone a disposición de la entidad para pruebas; y por puesta en producción, el momento en que una entrega empieza a ser usada por los ciudadanos. Las demás expresiones se entenderán en su sentido natural y obvio.
+
+1.4 RÉGIMEN JURÍDICO
+El proceso de selección y el contrato que de él se derive se rigen por las normas de contratación estatal vigentes, por las disposiciones del presente pliego y por las adendas que la entidad publique durante el proceso. En lo no previsto se aplicarán las normas civiles y comerciales pertinentes. Las referencias normativas de este documento son informativas y no imponen por sí mismas obligaciones adicionales a los interesados.
+
+1.5 CONSULTA DEL PROCESO
+Los documentos del proceso se encuentran publicados en la plataforma transaccional. Los interesados podrán formular observaciones en los plazos del cronograma, y la entidad las responderá mediante documento publicado en la misma plataforma. Las respuestas no modifican el pliego salvo que se expida la adenda correspondiente.
+
+CAPÍTULO 4. REQUISITOS HABILITANTES
+
+4.1 CAPACIDAD JURÍDICA
+El proponente deberá estar inscrito en el Registro Único de Proponentes y estar clasificado en al menos dos de los códigos UNSPSC 81111500, 81112000 y 43230000.
+
+4.2 CAPACIDAD FINANCIERA
+El proponente deberá acreditar un índice de liquidez mayor o igual a 1,2.
+
+4.3 ENDEUDAMIENTO
+El proponente deberá acreditar un índice de endeudamiento menor o igual al 70 %.
+
+4.4 EXPERIENCIA DEL PROPONENTE
+El proponente deberá acreditar hasta cuatro (4) contratos de desarrollo de software terminados, cuyo valor sumado sea igual o superior a 2.000 SMMLV, de los cuales al menos uno deberá haberse celebrado con una entidad del orden nacional.
+
+4.5 CERTIFICACIÓN DE CALIDAD
+El proponente deberá contar con certificación ISO 9001 vigente cuyo alcance incluya el desarrollo de software.
+
+CAPÍTULO 2. ALCANCE DEL OBJETO
+
+2.1 DESCRIPCIÓN DEL SERVICIO
+El contratista desarrollará la plataforma por entregas sucesivas. En cada entrega la entidad revisará las funcionalidades acordadas, registrará las observaciones y aprobará o devolverá la entrega. La plataforma se construirá sobre componentes de código abierto o con licenciamiento a nombre de la entidad, de manera que al terminar el contrato la entidad conserve el control total sobre el software y su documentación.
+
+2.2 ACTIVIDADES PREVISTAS
+Las actividades previstas incluyen el levantamiento de información con las dependencias, el diseño de la arquitectura, la construcción de los módulos, la migración de datos, las pruebas con usuarios, la capacitación de los funcionarios y el acompañamiento durante los primeros meses de operación. El detalle de cada actividad se encuentra en el anexo técnico, que hace parte integral del presente pliego.
+
+2.3 SUPERVISIÓN
+La supervisión del contrato estará a cargo del jefe de la oficina de tecnologías de la información de la entidad o de quien este designe. El supervisor aprobará los informes de avance y autorizará los pagos de acuerdo con las entregas recibidas a satisfacción.
+
+CAPÍTULO 5. EQUIPO DE TRABAJO
+
+5.1 PERSONAL MÍNIMO
+Líder técnico con título profesional en ingeniería, certificación Scrum Master y seis (6) años de experiencia en proyectos de desarrollo de software.
+
+5.2 CONDICIONES DEL PERSONAL
+La entidad podrá solicitar el cambio de cualquier integrante del equipo durante la ejecución cuando su desempeño no corresponda a lo esperado. En ese caso el contratista propondrá un reemplazo de perfil equivalente dentro de los diez días siguientes a la solicitud.
+
+CAPÍTULO 6. FACTORES DE PONDERACIÓN
+
+6.1 METODOLOGÍA DE PRUEBAS
+Se otorgarán hasta 25 puntos al proponente que presente una metodología de pruebas automatizadas con una cobertura mínima del 80 % del código.
+
+6.2 EXPERIENCIA ADICIONAL
+Se otorgarán hasta 15 puntos al proponente que acredite experiencia de la empresa en proyectos desplegados con Kubernetes.
+
+CAPÍTULO 7. CONDICIONES FINALES
+
+7.1 FORMA DE PAGO
+La entidad pagará el valor del contrato en cuotas proporcionales a las entregas aprobadas por el supervisor, previa presentación de la factura y de la certificación de pago de aportes al sistema de seguridad social.
+
+7.2 LIQUIDACIÓN
+El contrato se liquidará dentro de los cuatro meses siguientes a su terminación, de común acuerdo entre las partes o de forma unilateral por la entidad en los casos previstos por la ley.

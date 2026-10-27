@@ -1,16 +1,23 @@
-version: '3.8'
+# Entorno local. Los secretos (Azure OpenAI, Service Bus, OIDC) se leen del .env;
+# "environment" solo sobrescribe lo que cambia dentro de la red de Docker.
+#
+# Para pruebas locales sin Azure Service Bus deje SERVICE_BUS_CONNECTION_STRING
+# vacía: la API ejecuta el análisis en su propio proceso y worker_analysis termina.
 
 services:
   webui:
-    build: 
+    build:
       context: .
       dockerfile: docker/webui.Dockerfile
     ports:
       - "8080:8080"
+    env_file: .env
     environment:
       - API_URL=http://api:8000
+      - API_TOKEN=${API_TOKEN}
     depends_on:
       - api
+    restart: unless-stopped
 
   api:
     build:
@@ -18,43 +25,77 @@ services:
       dockerfile: docker/api.Dockerfile
     ports:
       - "8000:8000"
+    env_file: .env
     environment:
       - DB_CONNECTION_STRING=postgresql://user:password@db:5432/licitaciones
-      - SERVICE_BUS_CONNECTION_STRING=Endpoint=sb://mock...
+      - CORS_ORIGINS=http://localhost:8080
+      - INFORMES_DIR=/app/data/informes
+      - EXPEDIENTES_DIR=/app/data/expedientes
+      - AUTH_MODE=${AUTH_MODE}
+      - API_TOKEN_DESARROLLO=${API_TOKEN_DESARROLLO}
+    volumes:
+      # Compartido con worker_analysis: el informe lo escribe el worker y lo sirve la API.
+      - informes:/app/data/informes
+      # Expediente documental: lo escriben la API (carga manual) y la vigilancia (descargas).
+      - expedientes:/app/data/expedientes
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    restart: unless-stopped
 
+  # Sin SERVICE_BUS_CONNECTION_STRING en el .env este worker termina al arrancar
+  # y la API ejecuta el análisis en su propio proceso.
   worker_analysis:
     build:
       context: .
       dockerfile: docker/worker_analysis.Dockerfile
+    env_file: .env
     environment:
       - DB_CONNECTION_STRING=postgresql://user:password@db:5432/licitaciones
-      - SERVICE_BUS_CONNECTION_STRING=Endpoint=sb://mock...
-      - AZURE_OPENAI_ENDPOINT=https://mock.openai.azure.com/
-      - AZURE_OPENAI_API_KEY=mock_key
+      - INFORMES_DIR=/app/data/informes
+      - EXPEDIENTES_DIR=/app/data/expedientes
+    volumes:
+      - informes:/app/data/informes
+      - expedientes:/app/data/expedientes
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    restart: on-failure
 
+  # Ejecuta un barrido de SECOP II (Datos Abiertos) y termina.
   worker_vigilance:
     build:
       context: .
       dockerfile: docker/worker_vigilance.Dockerfile
+    env_file: .env
     environment:
       - DB_CONNECTION_STRING=postgresql://user:password@db:5432/licitaciones
+      - EXPEDIENTES_DIR=/app/data/expedientes
+    volumes:
+      - expedientes:/app/data/expedientes
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    restart: "no"
 
   db:
-    image: ankane/pgvector:latest
+    image: pgvector/pgvector:pg16
+    # Credenciales solo para el contenedor local; no reutilizar fuera de este entorno.
     environment:
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=licitaciones
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d licitaciones"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 volumes:
   pgdata:
+  informes:
+  expedientes:

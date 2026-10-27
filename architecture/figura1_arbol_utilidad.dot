@@ -1,0 +1,32 @@
+digraph UT {
+ rankdir=LR; nodesep=0.18; ranksep=0.45;
+ node [shape=box, style="rounded,filled", fontname="Arial", fontsize=11, penwidth=1];
+ edge [color="#555555", arrowhead=none];
+ root [label="Utilidad del\nsistema multi-agente", fillcolor="#08427b", fontcolor="white", fontsize=12];
+ node [fillcolor="#1168bd", fontcolor="white"];
+ ed [label="Eficiencia de\ndesempeño"]; co [label="Compatibilidad"]; fi [label="Fiabilidad"]; se [label="Seguridad"]; 
+fl [label="Flexibilidad"];
+ node [fillcolor="#438dd5", fontcolor="white"];
+ r1 [label="Comportamiento\ntemporal"]; r2 [label="Capacidad"]; r3 [label="Interoperabilidad"]; r4 
+[label="Disponibilidad y\nrecuperabilidad"]; r7 [label="Tolerancia a fallos"]; r6 [label="Integridad y\nno repudio"]; r9 
+[label="Autenticidad"]; r8 [label="Escalabilidad"];
+ node [fillcolor="white", fontcolor="black", shape=box, style="rounded"];
+ a1 [label="ASR-01 p90 ≤ 10 min por pliego con 10 solicitudes concurrentes", color="#b30000", penwidth=2];
+ a4 [label="ASR-04 RTO ≤ 4 h, RPO ≤ 12 h, 0 informes corruptos en simulacro", color="#b30000", penwidth=2];
+ a7 [label="ASR-07 0 % de caídas del núcleo ante fallos 429/503 o timeout externo", color="#b30000", penwidth=2];
+ a2 [label="ASR-02 p95: 10 evaluaciones concurrentes sin errores 5xx en 45 min", color="#d97a00", penwidth=2];
+ a3 [label="ASR-03 ≥ 98 % de interpretación exitosa sobre 500 procesos", color="#d97a00", penwidth=2];
+ a6 [label="ASR-06 100 % de informes verificables por huella SHA-256", color="#d97a00", penwidth=2];
+ a8 [label="ASR-08 0 archivos modificados para duplicar capacidad en ≤ 5 min", color="#d97a00", penwidth=2];
+ a9 [label="ASR-09 100 % de peticiones no autorizadas rechazadas en servidor", color="#6b6b6b", penwidth=2];
+ node [shape=plaintext, style="", fontsize=10];
+ p1 [label="(Alta, Alta)"]; p4 [label="(Alta, Alta)"]; p7 [label="(Alta, Alta)"]; p2 [label="(Alta, Media)"]; p3 
+[label="(Alta, Media)"]; p6 [label="(Alta, Media)"]; p8 [label="(Media, Alta)"]; p9 [label="(Media, Media)"];
+ root -> {ed co fi se fl};
+ ed -> r1 -> a1 -> p1; ed -> r2 -> a2 -> p2;
+ co -> r3 -> a3 -> p3;
+ fi -> r4 -> a4 -> p4; fi -> r7 -> a7 -> p7;
+ se -> r6 -> a6 -> p6; se -> r9 -> a9 -> p9;
+ fl -> r8 -> a8 -> p8;
+ edge [style=invis];
+}

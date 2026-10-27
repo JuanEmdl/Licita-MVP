@@ -1,0 +1,17 @@
+{
+  "nombre": "Pliego largo (dos fragmentos)",
+  "descripcion": "Pliego de dos fragmentos en el que los numerales 4.4 y 4.5 quedan en la zona de solape. Prueba que la deduplicación del grafo los reconozca (requiere un texto estable) y que el texto general, la supervisión y la forma de pago no se extraigan. La condición de código abierto o licenciamiento del numeral 2.1 sí es un requisito técnico; no es habilitante porque el pliego no la presenta con redacción imperativa ni como mínimo.",
+  "pliego_archivo": "data/evaluacion/pliegos/03_pliego_largo.txt",
+  "esperados": [
+    {"id": "Código abierto o licencia", "claves": ["codigo abierto", "licenciamiento a nombre de la entidad"], "categoria": "tecnico", "habilitante": false, "referencia": "2.1"},
+    {"id": "RUP y UNSPSC", "claves": ["unico de proponentes", "81112000"], "categoria": "juridico", "habilitante": true, "referencia": "4.1"},
+    {"id": "Liquidez", "claves": ["liquidez", "1,2"], "categoria": "financiero", "habilitante": true, "referencia": "4.2"},
+    {"id": "Endeudamiento", "claves": ["endeudamiento", "70"], "categoria": "financiero", "habilitante": true, "referencia": "4.3"},
+    {"id": "Contratos", "claves": ["2.000 smmlv", "orden nacional"], "categoria": "experiencia", "habilitante": true, "referencia": "4.4"},
+    {"id": "ISO 9001", "claves": ["9001"], "categoria": "tecnico", "habilitante": true, "referencia": "4.5"},
+    {"id": "Líder técnico", "claves": ["lider tecnico", "scrum master"], "categoria": "personal", "habilitante": true, "referencia": "5.1"},
+    {"id": "Pruebas automatizadas", "claves": ["pruebas automatizadas", "80"], "categoria": "tecnico", "habilitante": false, "referencia": "6.1"},
+    {"id": "Kubernetes", "claves": ["kubernetes"], "categoria": "experiencia", "habilitante": false, "referencia": "6.2"}
+  ],
+  "prohibidos": [["supervisor"], ["liquidara"], ["cuotas proporcionales"], ["matriz de riesgos"], ["reemplazo"]]
+}
