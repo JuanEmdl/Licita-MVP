@@ -19,18 +19,30 @@ __pycache__/
 *.pem
 *.key
 
-# --- Editor / herramientas ---
+# --- Editor / herramientas / Asistentes IA ---
 .vscode/
 .idea/
 .claude/
+/*CLAUDE*
+/*claude*
+CLAUDE.md
 
 # --- Sistema operativo ---
 Thumbs.db
 Desktop.ini
 .DS_Store
 
-# --- Documentos ---
+# --- Documentos y actualizaciones de grado ---
 *.pdf
+*.docx
+*.doc
+*.odt
+*.pptx
+*.xlsx
+/*DOCUMENTO*
+/*documento*
+/CAPITULO_*
+/capitulo_*
 
 # --- Cobertura ---
 .coverage
